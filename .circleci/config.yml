@@ -23,8 +23,7 @@ jobs:
             ssh-keyscan melissaandbriangetmarried.com >> ~/.ssh/known_hosts
             scp .env bwhitton@melissaandbriangetmarried.com:~
             ssh bwhitton@melissaandbriangetmarried.com "docker pull noslouch/wedding-api"
-            ssh bwhitton@melissaandbriangetmarried.com "docker stop wedding-api"
-            ssh bwhitton@melissaandbriangetmarried.com "docker rm wedding-api"
+            ssh bwhitton@melissaandbriangetmarried.com "docker stop wedding-api && docker rm wedding-api"
             ssh bwhitton@melissaandbriangetmarried.com "docker run \
                                                         --name wedding-api \
                                                         --restart always \

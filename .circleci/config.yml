@@ -7,6 +7,9 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+      - add_ssh_keys:
+          fingerprints:
+            - "b7:68:8d:9b:f9:54:6e:fd:be:c5:7b:65:21:f0:ee:9a"
       - run:
           name: login to docker hub
           command: docker login -u $DOCKER_USER -p $DOCKER_PASS

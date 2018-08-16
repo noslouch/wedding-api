@@ -1,7 +1,7 @@
 FROM python:3-alpine
 
 # Copy in your requirements file
-ADD requirements.txt /requirements.txt
+COPY requirements.txt /requirements.txt
 
 # OR, if you’re using a directory for your requirements, copy everything (comment out the above and uncomment this if so):
 # ADD requirements /requirements
@@ -35,7 +35,7 @@ RUN apk add --update mailcap
 # Copy your application code to the container (make sure you create a .dockerignore file if any large files or directories should be excluded)
 RUN mkdir /code/
 WORKDIR /code/
-ADD . /code/
+COPY . /code/
 
 # uWSGI will listen on this port
 EXPOSE 8000

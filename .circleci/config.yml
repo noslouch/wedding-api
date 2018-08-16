@@ -29,9 +29,9 @@ jobs:
           name: pull down image and start with envvars
           command: |
             ssh-keyscan melissaandbriangetmarried.com >> ~/.ssh/known_hosts
-            ssh bwhitton@melissaandbriangetmarried.com "docker pull noslouch/wedding-api"
-            ssh bwhitton@melissaandbriangetmarried.com "docker stop wedding-api && docker rm wedding-api"
-            ssh bwhitton@melissaandbriangetmarried.com "docker run \
+            ssh bwhitton@melissaandbriangetmarried.com -v "docker pull noslouch/wedding-api"
+            ssh bwhitton@melissaandbriangetmarried.com -v "docker stop wedding-api && docker rm wedding-api"
+            ssh bwhitton@melissaandbriangetmarried.com -v "docker run \
                                                         --name wedding-api \
                                                         --restart always \
                                                         --env-file ~/.env \

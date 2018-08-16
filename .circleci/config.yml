@@ -15,7 +15,7 @@ jobs:
           command: docker build -t noslouch/wedding-api .
       - run:
           name: 🚢 it
-          command: docker push noslouich/wedding-api
+          command: docker push noslouch/wedding-api
       - run:
           name: pull down image and start with envvars
           command: |

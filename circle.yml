@@ -34,3 +34,9 @@ jobs:
                                                         -t noslouch/wedding-api"
             
 
+workflows:
+  version: 2
+
+  deploy:
+    jobs:
+      - deploy

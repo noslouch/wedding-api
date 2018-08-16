@@ -1,4 +1,3 @@
-
 version: 2
 jobs:
   build:
@@ -17,7 +16,7 @@ jobs:
           name: build image
           command: docker build -t noslouch/wedding-api .
       - run:
-          name: 🚢 it
+          name: ship it
           command: docker push noslouch/wedding-api
       - run:
           name: setup envvars

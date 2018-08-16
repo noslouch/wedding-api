@@ -1,9 +1,9 @@
 version: 2
 jobs:
-  
+
   ship:
     docker:
-      - image: circleci/python:3
+      - image: circleci/python:3.7
     steps:
       - checkout
       - setup_remote_docker
@@ -31,11 +31,3 @@ jobs:
                                                         --env-file ~/.env \
                                                         -p 8000:8000 \
                                                         -t noslouch/wedding-api"
-            
-
-workflows:
-  version: 2
-
-  deploy:
-    jobs:
-      - ship

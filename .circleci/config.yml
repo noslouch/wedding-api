@@ -9,7 +9,7 @@ jobs:
       - setup_remote_docker
       - add_ssh_keys:
           fingerprints:
-            - "b7:68:8d:9b:f9:54:6e:fd:be:c5:7b:65:21:f0:ee:9a"
+            - "9a:90:64:46:38:b2:ef:ad:55:e6:0e:36:a2:e4:e0:26"
       - run:
           name: login to docker hub
           command: docker login -u $DOCKER_USER -p $DOCKER_PASS

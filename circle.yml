@@ -1,0 +1,36 @@
+version: 2
+
+jobs:
+  
+  deploy:
+    docker:
+      - image: circleci/python:3
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: login to docker hub
+          command: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - run:
+          name: build image
+          command: docker build -t noslouch/wedding-api .
+      - run:
+          name: 🚢 it
+          command: docker push noslouich/wedding-api
+      - run:
+          name: pull down image and start with envvars
+          command: |
+            env | sed 's/DEPLOY_//p' > .env
+            scp .env bwhitton@melissaandbriangetmarried.com:~
+            ssh-keyscan melissaandbriangetmarried.com >> ~/.ssh/known_hosts
+            ssh bwhitton@melissaandbriangetmarried.com "docker pull noslouch/wedding-api"
+            ssh bwhitton@melissaandbriangetmarried.com "docker stop wedding-api"
+            ssh bwhitton@melissaandbriangetmarried.com "docker rm wedding-api"
+            ssh bwhitton@melissaandbriangetmarried.com "docker run \
+                                                        --name wedding-api \
+                                                        --restart always \
+                                                        --env-file ~/.env \
+                                                        -p 8000:8000 \
+                                                        -t noslouch/wedding-api"
+            
+

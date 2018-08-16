@@ -1,56 +1,38 @@
-# Python CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-python/ for more details
-#
 version: 2
 jobs:
   build:
     docker:
-      # specify the version you desire here
-      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.6.1
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
-    working_directory: ~/repo
-
+      - image: circleci/python:3.7
     steps:
       - checkout
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "requirements.txt" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
+      - setup_remote_docker
+      - add_ssh_keys:
+          fingerprints:
+            - "9a:90:64:46:38:b2:ef:ad:55:e6:0e:36:a2:e4:e0:26"
       - run:
-          name: install dependencies
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install -r requirements.txt
-
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
-
-      # run tests!
-      # this example uses Django's built-in test-runner
-      # other common Python testing frameworks include pytest and nose
-      # https://pytest.org
-      # https://nose.readthedocs.io
+          name: login to docker hub
+          command: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run:
-          name: run tests
+          name: build image
+          command: docker build -t noslouch/wedding-api .
+      - run:
+          name: 🚢 it
+          command: docker push noslouch/wedding-api
+      - run:
+          name: setup envvars
           command: |
-            . venv/bin/activate
-            python manage.py test
-
-      - store_artifacts:
-          path: test-reports
-          destination: test-reports
-          
+            ssh-keyscan melissaandbriangetmarried.com >> ~/.ssh/known_hosts
+            env | sed -n 's/DEPLOY_//p' > .env
+            scp .env bwhitton@melissaandbriangetmarried.com:~
+      - run:
+          name: pull down image and start with envvars
+          command: |
+            ssh bwhitton@melissaandbriangetmarried.com -v "docker pull noslouch/wedding-api"
+            ssh bwhitton@melissaandbriangetmarried.com -v "docker stop wedding-api && docker rm wedding-api"
+            ssh bwhitton@melissaandbriangetmarried.com -v "docker run \
+                                                        --name wedding-api \
+                                                        --restart always \
+                                                        --env-file ~/.env \
+                                                        -p 8000:8000 \
+                                                        -d \
+                                                        -t noslouch/wedding-api"

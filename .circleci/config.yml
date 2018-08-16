@@ -20,8 +20,8 @@ jobs:
           name: pull down image and start with envvars
           command: |
             env | sed 's/DEPLOY_//p' > .env
-            scp .env bwhitton@melissaandbriangetmarried.com:~
             ssh-keyscan melissaandbriangetmarried.com >> ~/.ssh/known_hosts
+            scp .env bwhitton@melissaandbriangetmarried.com:~
             ssh bwhitton@melissaandbriangetmarried.com "docker pull noslouch/wedding-api"
             ssh bwhitton@melissaandbriangetmarried.com "docker stop wedding-api"
             ssh bwhitton@melissaandbriangetmarried.com "docker rm wedding-api"

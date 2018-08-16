@@ -30,4 +30,5 @@ jobs:
                                                         --restart always \
                                                         --env-file ~/.env \
                                                         -p 8000:8000 \
+                                                        -d \
                                                         -t noslouch/wedding-api"

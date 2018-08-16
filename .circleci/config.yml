@@ -28,7 +28,6 @@ jobs:
       - run:
           name: pull down image and start with envvars
           command: |
-            ssh-keyscan melissaandbriangetmarried.com >> ~/.ssh/known_hosts
             ssh bwhitton@melissaandbriangetmarried.com -v "docker pull noslouch/wedding-api"
             ssh bwhitton@melissaandbriangetmarried.com -v "docker stop wedding-api && docker rm wedding-api"
             ssh bwhitton@melissaandbriangetmarried.com -v "docker run \

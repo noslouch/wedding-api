@@ -1,8 +1,7 @@
 version: 2
-
 jobs:
   
-  deploy:
+  ship:
     docker:
       - image: circleci/python:3
     steps:
@@ -39,4 +38,4 @@ workflows:
 
   deploy:
     jobs:
-      - deploy
+      - ship

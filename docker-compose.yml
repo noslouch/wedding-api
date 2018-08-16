@@ -1,8 +1,10 @@
-version: '3'
+version: '3.6'
 
 services:
   db:
-    image: postgres
+    image: postgres:10.1-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
   web:
     build: .
     command: /venv/bin/python manage.py runserver 0.0.0.0:8000
@@ -12,3 +14,6 @@ services:
       - "8000:8000"
     depends_on:
       - db
+
+volumes:
+  postgres_data:

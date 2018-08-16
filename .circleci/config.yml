@@ -20,11 +20,15 @@ jobs:
           name: 🚢 it
           command: docker push noslouch/wedding-api
       - run:
+          name: setup envvars
+          command: |
+            ssh-keyscan melissaandbriangetmarried.com >> ~/.ssh/known_hosts
+            env | sed -n 's/DEPLOY_//p' > .env
+            scp .env bwhitton@melissaandbriangetmarried.com:~
+      - run:
           name: pull down image and start with envvars
           command: |
-            env | sed -n 's/DEPLOY_//p' > .env
             ssh-keyscan melissaandbriangetmarried.com >> ~/.ssh/known_hosts
-            scp .env bwhitton@melissaandbriangetmarried.com:~
             ssh bwhitton@melissaandbriangetmarried.com "docker pull noslouch/wedding-api"
             ssh bwhitton@melissaandbriangetmarried.com "docker stop wedding-api && docker rm wedding-api"
             ssh bwhitton@melissaandbriangetmarried.com "docker run \

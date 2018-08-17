@@ -6,6 +6,7 @@ from .models import Invitation, Guest
 class GuestSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     wedding_rsvp = serializers.NullBooleanField()
+    sunday_brunch = serializers.NullBooleanField(required=False)
     rehearsal_rsvp = serializers.NullBooleanField(required=False)
 
     class Meta:
@@ -16,6 +17,7 @@ class GuestSerializer(serializers.ModelSerializer):
             'last_name',
             'wedding_rsvp',
             'rehearsal_rsvp',
+            'sunday_brunch',
             'invitation')
 
     def validate(self, data):

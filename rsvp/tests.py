@@ -216,3 +216,20 @@ class InvitationTestCase(APITestCase):
         self.assertEqual(invite.plus_one, False, 'plus_one remains false')
         self.assertEqual(invite.rehearsal_dinner, False, 'rehearsal_dinner remains false')
 
+        too_many_guests = {
+            'guests': [{
+                'id': self.mom.id,
+                'wedding_rsvp': True
+            }, {
+                'id': self.dad.id,
+                'wedding_rsvp': True
+            }, {
+                'id': self.sis.id,
+                'wedding_rsvp': True
+            }]
+        }
+
+        too_many = self.client.patch(basic_invite, too_many_guests, format='json')
+        invite = Invitation.objects.get(pk=self.invitation.id)
+        self.assertEqual(too_many.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(invite.guests.count(), 2, 'guests are not changed')

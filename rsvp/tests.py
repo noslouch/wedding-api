@@ -90,7 +90,7 @@ class InvitationTestCase(APITestCase):
                 'wedding_rsvp': True,
             }]
         }
-        response = self.client.patch(one_and_one, data, format='json')
+        response = self.client.patch(url, one_and_one, format='json')
 
         mom = Guest.objects.get(pk=self.mom.id)
         dad = Guest.objects.get(pk=self.dad.id)

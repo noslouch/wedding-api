@@ -9,8 +9,11 @@ https://docs.djangoproject.com/en/2.1/howto/deployment/wsgi/
 
 import os
 
+import dotenv
+
 from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'wedding.settings')
+dotenv.read_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
 
 application = get_wsgi_application()

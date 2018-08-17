@@ -14,6 +14,8 @@ services:
       - "8000:8000"
     depends_on:
       - db
+    environment:
+      - DJANGO_SETTINGS_MODULE=wedding.settings.dev
 
 volumes:
   postgres_data:

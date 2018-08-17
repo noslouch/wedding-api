@@ -84,10 +84,10 @@ class InvitationTestCase(APITestCase):
         one_and_one = {
             'guests': [{
                 'id': self.mom.id,
-                'wedding_rsvp': False,
+                'wedding_rsvp': True,
             }, {
                 'id': self.dad.id,
-                'wedding_rsvp': True,
+                'wedding_rsvp': False,
             }]
         }
         response = self.client.patch(url, one_and_one, format='json')

@@ -57,7 +57,7 @@ class InvitationTestCase(APITestCase):
                          'multiple matches can be returned')
 
     def test_sending_rsvp(self):
-        url = reverse('invitation-detail', kwargs={'id': self.invitation.id})
+        url = reverse('invitation-detail', kwargs={'pk': self.invitation.id})
         data = {
             'music_pref': 'david bowie',
             'guests': [{
@@ -101,7 +101,7 @@ class InvitationTestCase(APITestCase):
         self.assertEqual(dad.wedding_rsvp, False)
 
     def test_plus_one(self):
-        invite_url = reverse('invitation-detail', kwargs={'id': self.plus_one.id})
+        invite_url = reverse('invitation-detail', kwargs={'pk': self.plus_one.id})
         new_guest_url = reverse('guest-list')
         rsvp_data = {
             'guests': [{
@@ -134,7 +134,7 @@ class InvitationTestCase(APITestCase):
         self.assertEqual(johnny.wedding_rsvp, True)
 
     def test_rehearsal_dinner(self):
-        url = reverse('invitation-detail', kwargs={'id': self.rehearsal_dinner.id})
+        url = reverse('invitation-detail', kwargs={'pk': self.rehearsal_dinner.id})
         data = {
             'guests': [{
                 'id': self.best_man.id,
@@ -150,7 +150,7 @@ class InvitationTestCase(APITestCase):
         self.assertEqual(best_man.rehearsal_rsvp, True, 'updates associated rsvp')
 
     def test_protect_rsvp(self):
-        rehearsal_rsvp = reverse('invitation-detail', kwargs={'id': self.rehearsal_dinner.id})
+        rehearsal_rsvp = reverse('invitation-detail', kwargs={'pk': self.rehearsal_dinner.id})
         new_guest_url = reverse('guest-list')
 
         wants_two_dinners = {

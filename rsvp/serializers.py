@@ -38,7 +38,7 @@ class InvitationSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         # remove nested serialization from data before calling super
-        guests = validated_data.pop('guests')
+        guests = validated_data.pop('guests', [])
         super().update(instance, validated_data)
 
         for guest in guests:

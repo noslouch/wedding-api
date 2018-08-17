@@ -37,56 +37,23 @@ class InvitationTestCase(APITestCase):
     def test_invitation_lookup(self):
         url = reverse('invitation-list')
 
-        INVITATION_RESPONSE = {
-            'id': self.invitation.id,
-            'plus_one': False,
-            'rehearsal_dinner': False,
-            'music_pref': None,
-            'guests': [{
-                'first_name': self.mom.first_name,
-                'last_name': self.mom.last_name,
-                'wedding_rsvp': None,
-                'rehearsal_rsvp': None,
-            }, {
-                'first_name': self.dad.first_name,
-                'last_name': self.dad.last_name,
-                'wedding_rsvp': None,
-                'rehearsal_rsvp': None,
-            }]
-        }
-        PLUS_ONE_RESPONSE = {
-            'id': self.rehearsal_dinner.id,
-            'plus_one': True,
-            'rehearsal_dinner': False,
-            'music_pref': None,
-            'guests': [{
-                'first_name': self.sis.first_name,
-                'last_name': self.sis.last_name,
-                'wedding_rsvp': None,
-                'rehearsal_rsvp': None,
-            }]
-        }
-        REHEARSAL_RESPONSE = {
-            'id': self.rehearsal_dinner.id,
-            'plus_one': False,
-            'rehearsal_dinner': True,
-            'music_pref': None,
-            'guests': [{
-                'first_name': self.best_man.first_name,
-                'last_name': self.best_man.last_name,
-                'wedding_rsvp': None,
-                'rehearsal_rsvp': None,
-            }]
-        }
-
         response = self.client.get(url, {'q': 'farberman'})
-        self.assertEqual(response.data, [REHEARSAL_RESPONSE], 'can look up invitation by last name')
+        invite = response.data[0]
+        self.assertEqual(invite['id'], self.rehearsal_dinner.id,
+                         'can look up invitation by last name')
+        self.assertEqual(len(invite['guests']), 1, 'includes just the one guest')
 
         response = self.client.get(url, {'q': 'dad@wedding.com'})
-        self.assertEqual(response.data, [INVITATION_RESPONSE], 'can look up invitation by email')
+        invite = response.data[0]
+        self.assertEqual(invite['id'], self.invitation.id, 'can look up invitation by email')
+        self.assertEqual(len(invite['guests']), 2, 'includes correct number of guests')
+        self.assertEqual(
+            [g['first_name'] for g in invite['guests']],
+            [self.dad.first_name, self.mom.first_name],
+            'includes expected guests')
 
         response = self.client.get(url, {'q': 'esner'})
-        self.assertEqual(response.data, [INVITATION_RESPONSE, PLUS_ONE_RESPONSE],
+        self.assertEqual(len(response.data), 2,
                          'multiple matches can be returned')
 
     def test_sending_rsvp(self):

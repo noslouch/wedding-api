@@ -127,8 +127,8 @@ class InvitationTestCase(APITestCase):
         johnny = Guest.objects.get(pk=guest_response.data['id'])
 
         self.assertEqual(invite.guests.count(), 2)
-        self.assertEqual(sis.invite.pk, invite.pk)
-        self.assertEqual(johnny.invite.pk, invite.pk)
+        self.assertEqual(sis.invitation.pk, invite.pk)
+        self.assertEqual(johnny.invitation.pk, invite.pk)
 
         self.assertEqual(sis.wedding_rsvp, True)
         self.assertEqual(johnny.wedding_rsvp, True)

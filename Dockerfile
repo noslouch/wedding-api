@@ -1,4 +1,4 @@
-FROM python:3-alpine
+FROM python:3.7-alpine
 
 # Copy in your requirements file
 COPY requirements.txt /requirements.txt
@@ -16,17 +16,24 @@ RUN set -ex \
             linux-headers \
             pcre-dev \
             postgresql-dev \
-    && python3.7 -m venv /venv \
-    && /venv/bin/pip install -U pip \
-    && LIBRARY_PATH=/lib:/usr/lib /bin/sh -c "/venv/bin/pip install --no-cache-dir -r /requirements.txt" \
-    && runDeps="$( \
-            scanelf --needed --nobanner --recursive /venv \
+    && pip install -U pip \
+    && pip install --no-cache-dir -r /requirements.txt \
+    && PIP_DEPS="$( \
+            scanelf --needed --nobanner --recursive /usr/local/lib/python3.7/site-packages \
                     | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
                     | sort -u \
                     | xargs -r apk info --installed \
                     | sort -u \
     )" \
-    && apk add --virtual .python-rundeps $runDeps \
+    && PY_DEPS="$( \
+            scanelf --needed --nobanner --recursive /usr/local/ in \
+                    | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+                    | sort -u \
+                    | xargs -r apk info --installed \
+                    | sort -u \
+    )" \
+    && apk add --virtual .python-rundeps $PIP_DEPS \
+    && apk add --virtual .python-rundeps $PY_DEPS \
     && apk del .build-deps
 
 # uwsgi dependency for mime types
@@ -44,7 +51,7 @@ EXPOSE 8000
 ENV DJANGO_SETTINGS_MODULE=wedding.settings.prod
 
 # uWSGI configuration (customize as needed):
-ENV UWSGI_VIRTUALENV=/venv UWSGI_WSGI_FILE=wedding/wsgi.py UWSGI_HTTP=:8000 UWSGI_MASTER=1 UWSGI_WORKERS=2 UWSGI_THREADS=8 UWSGI_UID=1000 UWSGI_GID=2000 UWSGI_LAZY_APPS=1 UWSGI_WSGI_ENV_BEHAVIOR=holy
+ENV UWSGI_WSGI_FILE=wedding/wsgi.py UWSGI_HTTP=:8000 UWSGI_MASTER=1 UWSGI_WORKERS=2 UWSGI_THREADS=8 UWSGI_UID=1000 UWSGI_GID=2000 UWSGI_LAZY_APPS=1 UWSGI_WSGI_ENV_BEHAVIOR=holy
 
 ENV VIRTUAL_HOST="api.melissaandbriangetmarried.com"
 ENV VIRTUAL_PORT="8000"
@@ -52,7 +59,7 @@ ENV LETSENCRYPT_HOST="api.melissaandbriangetmarried.com"
 ENV LETSENCRYPT_EMAIL="bwhitton@gmail.com"
 
 # Call collectstatic (customize the following line with the minimal environment variables needed for manage.py to run):
-RUN /venv/bin/python manage.py collectstatic --noinput
+RUN python manage.py collectstatic --noinput
 
 # Start uWSGI
-CMD ["/venv/bin/uwsgi", "--die-on-term", "--http-auto-chunked", "--http-keepalive", "--check-static", "/code/wedding"]
+CMD ["uwsgi", "--die-on-term", "--http-auto-chunked", "--http-keepalive", "--check-static", "/code/wedding"]

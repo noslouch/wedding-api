@@ -1,3 +1,5 @@
 from .base import *
 
-ALLOWED_HOSTS = ['api.melissaandbriangetmarried.com', 'localhost']
+ALLOWED_HOSTS = ['api.melissaandbriangetmarried.com']
+
+DEBUG = False

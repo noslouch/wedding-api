@@ -35,6 +35,20 @@ class InvitationSerializer(serializers.ModelSerializer):
         model = Invitation
         fields = ('id', 'plus_one', 'rehearsal_dinner', 'music_pref', 'guests')
 
+    def update(self, instance, validated_data):
+        # remove nested serialization from data before calling super
+        guests = validated_data.pop('guests')
+        super().update(instance, validated_data)
+
+        for guest in guests:
+            g = Guest.objects.get(pk=guest['id'])
+
+            for attr, value in guest.items():
+                setattr(g, attr, value)
+
+            g.save()
+        return instance
+
     def validate_guests(self, guests):
         """
         validates given guests:

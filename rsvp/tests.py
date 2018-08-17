@@ -70,7 +70,7 @@ class InvitationTestCase(APITestCase):
         }
 
         response = self.client.patch(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, 'response with 204')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         invite = Invitation.objects.get(pk=self.invitation.id)
         mom = Guest.objects.get(pk=self.mom.id)
@@ -119,7 +119,7 @@ class InvitationTestCase(APITestCase):
         rsvp_response = self.client.patch(invite_url, rsvp_data, format='json')
         guest_response = self.client.post(new_guest_url, plus_one_data, format='json')
 
-        self.assertEqual(rsvp_response.status_code, status.HTTP_204_NO_CONTENT, 'response with 204')
+        self.assertEqual(rsvp_response.status_code, status.HTTP_200_OK)
         self.assertEqual(guest_response.status_code, status.HTTP_201_CREATED, 'response with 201')
 
         invite = Invitation.objects.get(pk=self.plus_one.id)
@@ -143,7 +143,7 @@ class InvitationTestCase(APITestCase):
         }
 
         response = self.client.patch(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT, 'response with 204')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         best_man = Guest.objects.get(pk=self.best_man.id)
 
@@ -162,9 +162,11 @@ class InvitationTestCase(APITestCase):
 
         no_rehearsal = self.client.patch(rehearsal_rsvp, wants_two_dinners, format='json')
         self.assertEqual(
-            no_rehearsal.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY,
-            'server will not accept an attempt to rsvp for a rehearsal dinner on an invite that \
-            is not a rehearsal dinner invite')
+            no_rehearsal.status_code, status.HTTP_400_BAD_REQUEST,
+            """
+            server will not accept an attempt to rsvp for a
+            rehearsal dinner on an invite that is not a rehearsal dinner invite
+            """)
 
         crasher = {
             'first_name': 'Alan',
@@ -175,6 +177,8 @@ class InvitationTestCase(APITestCase):
 
         no_invite = self.client.post(new_guest_url, crasher, format='json')
         self.assertEqual(
-            no_invite.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY,
-            'server will not accept an attempt to rsvp a new guest with an invitation that does \
-            not provide for a plus one')
+            no_invite.status_code, status.HTTP_400_BAD_REQUEST,
+            """
+            server will not accept an attempt to rsvp a new
+            guest with an invitation that does not provide for a plus one
+            """)

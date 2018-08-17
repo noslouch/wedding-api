@@ -3,12 +3,14 @@ from .models import Invitation, Guest
 
 
 class GuestSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
     wedding_rsvp = serializers.NullBooleanField()
     rehearsal_rsvp = serializers.NullBooleanField(required=False)
 
     class Meta:
         model = Guest
         fields = (
+            'id',
             'first_name',
             'last_name',
             'wedding_rsvp',

@@ -133,6 +133,23 @@ class InvitationTestCase(APITestCase):
         self.assertEqual(sis.wedding_rsvp, True)
         self.assertEqual(johnny.wedding_rsvp, True)
 
+        update_date_name = {
+            'guests': [{
+                'id': johnny.id,
+                'first_name': 'Benny',
+                'last_name': 'The Dog'
+            }]
+        }
+        updated_date = self.client.patch(invite_url, update_date_name, format='json')
+        self.assertEqual(updated_date.status_code, status.HTTP_200_OK)
+
+        invite = Invitation.objects.get(pk=self.plus_one.id)
+        benny = Guest.objects.get(pk=johnny.id)
+        self.assertEqual(benny.first_name, 'Benny')
+        self.assertEqual(benny.last_name, 'The Dog')
+        self.assertEqual(benny.invitation.pk, invite.pk)
+        self.assertEqual(benny.wedding_rsvp, True)
+
     def test_rehearsal_dinner(self):
         url = reverse('invitation-detail', kwargs={'pk': self.rehearsal_dinner.id})
         data = {

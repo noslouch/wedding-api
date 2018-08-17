@@ -167,6 +167,7 @@ class InvitationTestCase(APITestCase):
         self.assertEqual(best_man.rehearsal_rsvp, True, 'updates associated rsvp')
 
     def test_protect_rsvp(self):
+        basic_invite = reverse('invitation-detail', kwargs={'pk': self.invitation.id})
         rehearsal_rsvp = reverse('invitation-detail', kwargs={'pk': self.rehearsal_dinner.id})
         new_guest_url = reverse('guest-list')
 
@@ -199,3 +200,19 @@ class InvitationTestCase(APITestCase):
             server will not accept an attempt to rsvp a new
             guest with an invitation that does not provide for a plus one
             """)
+
+        change_my_invite = {
+            'plus_one': True,
+            'rehearsal_dinner': True
+        }
+        self.client.post(basic_invite, change_my_invite, format='json')
+        invite = Invitation.objects.get(pk=self.invitation.id)
+        self.assertEqual(invite.plus_one, False, 'plus_one remains false')
+        self.assertEqual(invite.rehearsal_dinner, False, 'rehearsal_dinner remains false')
+
+        # and again for patch
+        self.client.patch(basic_invite, change_my_invite, format='json')
+        invite = Invitation.objects.get(pk=self.invitation.id)
+        self.assertEqual(invite.plus_one, False, 'plus_one remains false')
+        self.assertEqual(invite.rehearsal_dinner, False, 'rehearsal_dinner remains false')
+

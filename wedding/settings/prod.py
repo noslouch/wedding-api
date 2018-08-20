@@ -1,6 +1,9 @@
 from .base import *
 
 ALLOWED_HOSTS = ['api.melissaandbriangetmarried.com']
+CORS_ORIGIN_WHITELIST = [
+    'melissaandbriangetmarried.com',
+]
 
 DEBUG = False
 

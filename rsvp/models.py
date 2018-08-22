@@ -12,6 +12,7 @@ class Guest(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.EmailField(blank=True)
+    is_plus_one = models.BooleanField(default=False)
 
     wedding_rsvp = models.BooleanField(null=True)
     rehearsal_rsvp = models.BooleanField(null=True)

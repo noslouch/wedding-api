@@ -18,7 +18,9 @@ class GuestSerializer(serializers.ModelSerializer):
             'wedding_rsvp',
             'rehearsal_rsvp',
             'sunday_brunch',
-            'invitation')
+            'invitation',
+            'is_plus_one',
+        )
 
     def validate(self, data):
         if self.context['request'].method == 'POST':

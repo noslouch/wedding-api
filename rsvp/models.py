@@ -7,6 +7,9 @@ class Invitation(models.Model):
     address = models.TextField()
     music_pref = models.TextField(blank=True)
 
+    def __str__(self):
+        return self.address
+
 
 class Guest(models.Model):
     first_name = models.CharField(max_length=255)
@@ -19,3 +22,6 @@ class Guest(models.Model):
     sunday_brunch = models.BooleanField(null=True)
 
     invitation = models.ForeignKey(Invitation, on_delete=models.CASCADE, related_name='guests')
+
+    def __str__(self):
+        return "{0.first_name} {0.last_name}".format(self)

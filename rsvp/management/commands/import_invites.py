@@ -1,5 +1,4 @@
 import csv
-import re
 
 from itertools import islice
 
@@ -19,19 +18,26 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('csvfile', help='file path to the csv file')
+        parser.add_argument('-d', '--dry-run', action='store_true', default=False)
 
     def handle(self, *args, **options):
         rows = []
         with open(options['csvfile']) as file:
             reader = csv.DictReader(islice(file, 3, None))
-            for row in islice(reader, 4, None):
+            for row in reader:
                 rows.append({col: row[col] for col in row if col in FIELDS})
         rows = self.find_pairs(rows)
 
         for row in rows:
-            invite = self.make_invite(row)
-            guest = self.make_guest(row, invite)
-            print("Added {} to {}".format(guest, invite))
+            if not options['dry_run']:
+                invite = self.make_invite(row)
+                guest = self.make_guest(row, invite)
+                print("Added {} to {}".format(guest, invite))
+            else:
+                print("Invitation: {}".format(row[ADDY]))
+                print("Has Plus One?: {}".format(row.get('has_plus_one', False)))
+                print ("Guest: {} {}".format(row.get(FIRST), row.get(LAST)))
+                print("Is Plus One?: {}".format(row.get('is_plus_one', False)))
 
     def find_pairs(self, rows):
         new_rows = []

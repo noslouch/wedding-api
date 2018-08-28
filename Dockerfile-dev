@@ -2,5 +2,6 @@ FROM noslouch/wedding-api:latest
 
 COPY requirements-dev.txt .
 RUN pip install -r requirements-dev.txt
+ENV DJANGO_SETTINGS_MODULE=wedding.settings.dev
 
 EXPOSE 8000

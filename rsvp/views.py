@@ -12,12 +12,15 @@ class InvitationViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'patch']
 
     def get_queryset(self):
-        query = self.request.query_params.get('q')
-        if query:
+        query = self.request.query_params.get('q', '')
+        tokens = [t.title() for t in query.split(' ') if t]
+        if len(tokens) > 10:  # basic guard
+            return Invitation.objects.none()
+        if query and tokens:
             return Invitation.objects.filter(
                 Q(address__icontains=query) |
-                Q(guests__last_name__icontains=query) |
-                Q(guests__first_name__icontains=query) |
+                Q(guests__last_name__in=tokens) |
+                Q(guests__first_name__in=tokens) |
                 Q(guests__email__icontains=query)
             ).distinct()
         else:

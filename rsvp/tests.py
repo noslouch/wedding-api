@@ -56,6 +56,16 @@ class InvitationTestCase(APITestCase):
         self.assertEqual(len(response.data), 2,
                          'multiple matches can be returned')
 
+    def test_lookup_by_full_name(self):
+        url = reverse('invitation-list')
+
+        response = self.client.get(url, {'q': 'brad farberman'})
+        self.assertEqual(len(response.data), 1, 'should return one invitation')
+        invite = response.data[0]
+        self.assertEqual(invite['id'], self.rehearsal_dinner.id,
+                         'can look up invitation by last name')
+        self.assertEqual(len(invite['guests']), 1, 'includes just the one guest')
+
     def test_sending_rsvp(self):
         url = reverse('invitation-detail', kwargs={'pk': self.invitation.id})
         data = {

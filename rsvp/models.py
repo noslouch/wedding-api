@@ -6,6 +6,7 @@ class Invitation(models.Model):
     plus_one = models.BooleanField(default=False)
     address = models.TextField()
     music_pref = models.TextField(blank=True)
+    note = models.TextField(blank=True)
 
     def __str__(self):
         return self.address

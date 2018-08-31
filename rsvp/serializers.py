@@ -38,7 +38,7 @@ class InvitationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Invitation
-        fields = ('id', 'plus_one', 'rehearsal_dinner', 'music_pref', 'guests', 'address')
+        fields = ('id', 'plus_one', 'rehearsal_dinner', 'music_pref', 'guests', 'address', 'note')
 
     def update(self, instance, validated_data):
         # remove nested serialization from data before calling super

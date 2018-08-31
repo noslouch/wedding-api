@@ -14,7 +14,7 @@ class InvitationViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         query = self.request.query_params.get('q', '')
         tokens = [t.title() for t in query.split(' ') if t]
-        if len(tokens) > 10:  # basic guard
+        if len(tokens) > 100:  # basic guard
             return Invitation.objects.none()
         if query and tokens:
             return Invitation.objects.filter(

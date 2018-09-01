@@ -25,10 +25,10 @@ class InvitationAdmin(admin.ModelAdmin):
 class GuestAdmin(admin.ModelAdmin):
     list_display = (
         '__str__',
-        'is_plus_one',
         'wedding_rsvp',
         'sunday_brunch',
         'rehearsal_rsvp',
+        'is_plus_one',
     )
 
     ordering = ['first_name']

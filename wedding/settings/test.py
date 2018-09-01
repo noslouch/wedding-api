@@ -7,3 +7,10 @@ DEBUG = True
 # keep the html browseable api in dev
 from rest_framework import routers
 ROUTER = routers.DefaultRouter(trailing_slash=False)
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'test',
+    }
+}

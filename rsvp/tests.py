@@ -51,8 +51,8 @@ class InvitationTestCase(APITestCase):
         self.assertEqual(invite['id'], self.invitation.id, 'can look up invitation by email')
         self.assertEqual(len(invite['guests']), 2, 'includes correct number of guests')
         self.assertEqual(
-            [g['first_name'] for g in invite['guests']],
-            [self.dad.first_name, self.mom.first_name],
+            [g['first_name'] for g in sorted(invite['guests'], key=lambda x: x['first_name'])],
+            [n for n in sorted([self.dad.first_name, self.mom.first_name])],
             'includes expected guests')
 
         response = self.client.get(url, {'q': 'esner'})

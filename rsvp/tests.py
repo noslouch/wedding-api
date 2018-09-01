@@ -1,3 +1,6 @@
+import requests_mock
+
+from django.conf import settings
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -66,7 +69,8 @@ class InvitationTestCase(APITestCase):
                          'can look up invitation by last name')
         self.assertEqual(len(invite['guests']), 1, 'includes just the one guest')
 
-    def test_sending_rsvp(self):
+    @requests_mock.mock()
+    def test_sending_rsvp(self, r_mock):
         url = reverse('invitation-detail', kwargs={'pk': self.invitation.id})
         data = {
             'music_pref': 'david bowie',
@@ -78,6 +82,8 @@ class InvitationTestCase(APITestCase):
                 'wedding_rsvp': True,
             }]
         }
+
+        r_mock.post("{}".format(settings.MAILGUN_API))
 
         response = self.client.patch(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -110,7 +116,8 @@ class InvitationTestCase(APITestCase):
         self.assertEqual(mom.wedding_rsvp, True)
         self.assertEqual(dad.wedding_rsvp, False)
 
-    def test_plus_one(self):
+    @requests_mock.mock()
+    def test_plus_one(self, r_mock):
         invite_url = reverse('invitation-detail', kwargs={'pk': self.plus_one.id})
         new_guest_url = reverse('guest-list')
         rsvp_data = {
@@ -125,6 +132,8 @@ class InvitationTestCase(APITestCase):
             'wedding_rsvp': True,
             'invitation': self.plus_one.id
         }
+
+        r_mock.post("{}".format(settings.MAILGUN_API))
 
         rsvp_response = self.client.patch(invite_url, rsvp_data, format='json')
         guest_response = self.client.post(new_guest_url, plus_one_data, format='json')
@@ -160,7 +169,8 @@ class InvitationTestCase(APITestCase):
         self.assertEqual(benny.invitation.pk, invite.pk)
         self.assertEqual(benny.wedding_rsvp, True)
 
-    def test_rehearsal_dinner(self):
+    @requests_mock.mock()
+    def test_rehearsal_dinner(self, r_mock):
         url = reverse('invitation-detail', kwargs={'pk': self.rehearsal_dinner.id})
         data = {
             'guests': [{
@@ -169,6 +179,8 @@ class InvitationTestCase(APITestCase):
             }]
         }
 
+        r_mock.post("{}".format(settings.MAILGUN_API))
+
         response = self.client.patch(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -176,7 +188,8 @@ class InvitationTestCase(APITestCase):
 
         self.assertEqual(best_man.rehearsal_rsvp, True, 'updates associated rsvp')
 
-    def test_protect_rsvp(self):
+    @requests_mock.mock()
+    def test_protect_rsvp(self, r_mock):
         basic_invite = reverse('invitation-detail', kwargs={'pk': self.invitation.id})
         rehearsal_rsvp = reverse('invitation-detail', kwargs={'pk': self.rehearsal_dinner.id})
         new_guest_url = reverse('guest-list')
@@ -187,6 +200,8 @@ class InvitationTestCase(APITestCase):
                 'rehearsal_rsvp': True
             }]
         }
+
+        r_mock.post("{}".format(settings.MAILGUN_API))
 
         no_rehearsal = self.client.patch(rehearsal_rsvp, wants_two_dinners, format='json')
         self.assertEqual(

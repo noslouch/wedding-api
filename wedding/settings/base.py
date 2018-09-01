@@ -131,3 +131,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
+
+MAILGUN_API = 'https://api.mailgun.net/v3/mail.melissaandbriangetmarried.com/messages'
+MAILGUN_KEY = os.environ.get('MAILGUN_KEY', '')

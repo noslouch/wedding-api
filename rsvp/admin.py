@@ -13,6 +13,7 @@ class WeddingAdmin(admin.AdminSite):
 class InvitationAdmin(admin.ModelAdmin):
     list_display = ('address', 'rehearsal_dinner', 'plus_one', 'guests')
     ordering = ['address']
+    search_fields = ['address']
 
     def guests(self, invite):
         return format_html_join(
@@ -32,6 +33,7 @@ class GuestAdmin(admin.ModelAdmin):
     )
 
     ordering = ['first_name']
+    search_fields = ['first_name', 'last_name', 'email']
 
 
 admin_site = WeddingAdmin()

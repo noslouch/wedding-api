@@ -35,6 +35,9 @@ class Command(BaseCommand):
             query = dict(wedding_rsvp__isnull=True)
 
         if export:
+            if not out:
+                self.stderr.write("Outfile required")
+                return
             self.export(query, out)
         else:
             self.print_out(query)

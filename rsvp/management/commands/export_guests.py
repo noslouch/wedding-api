@@ -19,27 +19,41 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('set', choices=['yes', 'no', 'noresponse'])
-        parser.add_argument('csvfile', help='output file path')
-        parser.add_argument('-d', '--dry-run', action='store_true', default=False)
+        parser.add_argument('-o', '--out', action='store', dest='csvfile', help='output file path')
+        parser.add_argument('-p', '--print', action='store_true', default=False)
 
     def handle(self, *args, **options):
         choice = options['set']
         out = options['csvfile']
+        export = not options['print']
+
         if choice == 'yes':
-            self.export(dict(wedding_rsvp=True), out)
+            query = dict(wedding_rsvp=True)
         elif choice == 'no':
-            self.export(dict(wedding_rsvp=False), out)
+            query = dict(wedding_rsvp=False)
         elif choice == 'noresponse':
-            self.export(dict(wedding_rsvp__isnull=True), out)
+            query = dict(wedding_rsvp__isnull=True)
+
+        if export:
+            self.export(query, out)
+        else:
+            self.print_out(query)
 
     def export(self, query, outfile):
-        print("running query: {}={}".format(*query, *query.values()))
+        self.stdout.write("running query: {}={}".format(*query, *query.values()))
         guests = Guest.objects.filter(**query)
 
-        print('found {} guests'.format(guests.count()))
+        self.stdout.write('found {} guests'.format(guests.count()))
         with open(outfile, 'w') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=FIELDS)
 
             writer.writeheader()
             for guest in guests:
                 writer.writerow({key: getattr(guest, key) for key in FIELDS})
+
+    def print_out(self, query):
+        guests = Guest.objects.filter(**query)
+
+        self.stdout.write("\n".join(["{} {}".format(g.first_name, g.last_name)
+                          for g in guests]))
+        self.stdout.write(self.style.SUCCESS("%d Guests" % guests.count()))

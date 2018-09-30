@@ -1,5 +1,7 @@
 FROM noslouch/wedding-api:latest
 
+WORKDIR /code/
+COPY . /code/
 COPY requirements-dev.txt .
 RUN pip install -r requirements-dev.txt
 ENV DJANGO_SETTINGS_MODULE=wedding.settings.dev
